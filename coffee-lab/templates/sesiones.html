@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1>Sesiones de Breo</h1>
+    <p>Log de cada preparación</p>
+  </div>
+  <button class="btn btn-primary" onclick="toggleForm(this, 'add-form')">+ Registrar</button>
+</div>
+
+<div class="form-panel" id="add-form">
+  <div class="form-title">Nueva Sesión</div>
+  <form action="/sesiones/add" method="POST">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Café</label>
+        <select name="cafe_id">
+          <option value="">— sin café —</option>
+          {% for c in cafes %}
+            <option value="{{ c.id }}">{{ c.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Método</label>
+        <select name="metodo">
+          <option value="">— seleccionar —</option>
+          <option value="V60">V60</option>
+          <option value="Switch">Switch</option>
+          <option value="Chemex">Chemex</option>
+          <option value="AeroPress">AeroPress</option>
+          <option value="UFO-V2">UFO V2</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Fecha</label>
+        <input type="date" name="fecha">
+      </div>
+      <div class="form-group">
+        <label>Puntuación (1–10)</label>
+        <input type="number" name="puntuacion" min="1" max="10" step="0.5" placeholder="8.0">
+      </div>
+      <div class="form-group full">
+        <label>Notas de la Sesión</label>
+        <textarea name="notas" placeholder="Ej. Molienda fina, agua a 94°C. La taza resultó brillante con acidez cítrica y final limpio..."></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Guardar Sesión</button>
+    </div>
+  </form>
+</div>
+
+{% if sesiones %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Café</th>
+        <th>Método</th>
+        <th>Puntuación</th>
+        <th>Notas</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in sesiones %}
+      <tr>
+        <td class="td-muted">{{ s.fecha or '—' }}</td>
+        <td><strong>{{ s.cafe_nombre or '—' }}</strong></td>
+        <td>
+          {% if s.metodo %}
+            <span class="badge badge-{{ s.metodo | lower | replace(' ', '-') }}">{{ s.metodo }}</span>
+          {% else %}—{% endif %}
+        </td>
+        <td>
+          {% if s.puntuacion %}
+            <span class="score">
+              <span class="score-val">{{ s.puntuacion }}</span>
+              <span class="score-label">/10</span>
+            </span>
+          {% else %}—{% endif %}
+        </td>
+        <td class="td-notes">{{ s.notas or '—' }}</td>
+        <td>
+          <div style="display:flex; gap:6px;">
+            <a href="/sesiones/edit/{{ s.id }}" class="btn btn-ghost btn-sm">Editar</a>
+            <form action="/sesiones/delete/{{ s.id }}" method="POST"
+                  onsubmit="return confirm('¿Eliminar esta sesión?')">
+              <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">◆</div>
+  <p>Sin sesiones registradas todavía.<br>Registra tu próxima preparación.</p>
+</div>
+{% endif %}
+
+{% endblock %}

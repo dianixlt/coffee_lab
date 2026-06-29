@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1>Equipo</h1>
+    <p>Inventario de brewers, grinders y accesorios</p>
+  </div>
+  <button class="btn btn-primary" onclick="toggleForm(this, 'add-form')">+ Agregar</button>
+</div>
+
+<div class="form-panel" id="add-form">
+  <div class="form-title">Agregar Equipo</div>
+  <form action="/equipo/add" method="POST">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nombre *</label>
+        <input type="text" name="nombre" required placeholder="Ej. Hario V60 02">
+      </div>
+      <div class="form-group">
+        <label>Marca</label>
+        <input type="text" name="marca" placeholder="Ej. Hario">
+      </div>
+      <div class="form-group">
+        <label>Tipo</label>
+        <select name="tipo">
+          <option value="">— seleccionar —</option>
+          <option value="brewer">Brewer</option>
+          <option value="grinder">Grinder</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Fecha de Adquisición</label>
+        <input type="date" name="fecha_adquisicion">
+      </div>
+      <div class="form-group full">
+        <label>Notas</label>
+        <textarea name="notas" placeholder="Ej. Plástico transparente, usado con filtros Hario tabless..."></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Guardar Equipo</button>
+    </div>
+  </form>
+</div>
+
+{% if equipo %}
+<div class="cards-grid">
+  {% for e in equipo %}
+  <div class="card">
+    <div class="card-badges">
+      {% if e.tipo %}
+        <span class="badge badge-{{ e.tipo }}">{{ e.tipo | title }}</span>
+      {% endif %}
+    </div>
+    <div class="card-title">{{ e.nombre }}</div>
+    <div class="card-subtitle">{{ e.marca or '—' }}</div>
+    {% if e.notas %}
+    <div class="card-meta" style="margin-bottom:8px;">{{ e.notas }}</div>
+    {% endif %}
+    {% if e.fecha_adquisicion %}
+    <div class="card-meta"><strong>Adquirido:</strong> {{ e.fecha_adquisicion }}</div>
+    {% endif %}
+    <div class="card-actions">
+      <a href="/equipo/edit/{{ e.id }}" class="btn btn-ghost btn-sm">Editar</a>
+      <form action="/equipo/delete/{{ e.id }}" method="POST"
+            onsubmit="return confirm('¿Eliminar {{ e.nombre }}?')">
+        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">⚙</div>
+  <p>No hay equipo registrado todavía.<br>Agrega tu brewer o grinder principal.</p>
+</div>
+{% endif %}
+
+{% endblock %}

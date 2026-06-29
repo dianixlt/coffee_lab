@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1>Recetas</h1>
+    <p>Parámetros de preparación para cada café</p>
+  </div>
+  <button class="btn btn-primary" onclick="toggleForm(this, 'add-form')">+ Agregar</button>
+</div>
+
+<div class="form-panel" id="add-form">
+  <div class="form-title">Nueva Receta</div>
+  <form action="/recetas/add" method="POST">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Café</label>
+        <select name="cafe_id">
+          <option value="">— sin café —</option>
+          {% for c in cafes %}
+            <option value="{{ c.id }}">{{ c.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Método</label>
+        <select name="metodo">
+          <option value="">— seleccionar —</option>
+          <option value="V60">V60</option>
+          <option value="Switch">Switch</option>
+          <option value="Chemex">Chemex</option>
+          <option value="AeroPress">AeroPress</option>
+          <option value="UFO-V2">UFO V2</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Dosis de Café (g)</label>
+        <input type="number" name="dosis_cafe" step="0.1" placeholder="15.0">
+      </div>
+      <div class="form-group">
+        <label>Agua (ml)</label>
+        <input type="number" name="agua_ml" placeholder="250">
+      </div>
+      <div class="form-group">
+        <label>Temperatura (°C)</label>
+        <input type="number" name="temperatura" min="70" max="100" placeholder="92">
+      </div>
+      <div class="form-group">
+        <label>Tiempo Total</label>
+        <input type="text" name="tiempo_total" placeholder="Ej. 3:30">
+      </div>
+      <div class="form-group full">
+        <label>Notas de Preparación</label>
+        <textarea name="notas" placeholder="Ej. Bloom 30s con 50ml, pulso a 1:00, 2:00 y 2:45..."></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Guardar Receta</button>
+    </div>
+  </form>
+</div>
+
+{% if recetas %}
+<div class="cards-grid">
+  {% for r in recetas %}
+  <div class="card">
+    <div class="card-badges">
+      {% if r.metodo %}
+        <span class="badge badge-{{ r.metodo | lower | replace(' ', '-') }}">{{ r.metodo }}</span>
+      {% endif %}
+    </div>
+    <div class="card-title">{{ r.cafe_nombre or 'Sin café asignado' }}</div>
+    <div class="card-meta" style="margin: 10px 0; display:flex; gap:16px; flex-wrap:wrap;">
+      {% if r.dosis_cafe %}
+        <span><strong>{{ r.dosis_cafe }}g</strong> café</span>
+      {% endif %}
+      {% if r.agua_ml %}
+        <span><strong>{{ r.agua_ml }}ml</strong> agua</span>
+      {% endif %}
+      {% if r.temperatura %}
+        <span><strong>{{ r.temperatura }}°C</strong></span>
+      {% endif %}
+      {% if r.tiempo_total %}
+        <span><strong>{{ r.tiempo_total }}</strong></span>
+      {% endif %}
+    </div>
+    {% if r.notas %}
+    <div class="card-meta">{{ r.notas }}</div>
+    {% endif %}
+    <div class="card-actions">
+      <a href="/recetas/edit/{{ r.id }}" class="btn btn-ghost btn-sm">Editar</a>
+      <form action="/recetas/delete/{{ r.id }}" method="POST"
+            onsubmit="return confirm('¿Eliminar esta receta?')">
+        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">⚗</div>
+  <p>No hay recetas registradas todavía.<br>Agrega los parámetros de tu próxima preparación.</p>
+</div>
+{% endif %}
+
+{% endblock %}

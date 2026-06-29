@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="edit-wrap">
+  <a href="/recetas" class="back-link">← Volver a Recetas</a>
+  <div class="page-header" style="margin-bottom:20px;">
+    <div><h1>Editar Receta</h1></div>
+  </div>
+  <div class="form-panel">
+    <form action="/recetas/edit/{{ receta.id }}" method="POST">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Café</label>
+          <select name="cafe_id">
+            <option value="">— sin café —</option>
+            {% for c in cafes %}
+              <option value="{{ c.id }}" {{ 'selected' if receta.cafe_id == c.id }}>{{ c.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Método</label>
+          <select name="metodo">
+            <option value="">— seleccionar —</option>
+            <option value="V60"       {{ 'selected' if receta.metodo == 'V60' }}>V60</option>
+            <option value="Switch"    {{ 'selected' if receta.metodo == 'Switch' }}>Switch</option>
+            <option value="Chemex"    {{ 'selected' if receta.metodo == 'Chemex' }}>Chemex</option>
+            <option value="AeroPress" {{ 'selected' if receta.metodo == 'AeroPress' }}>AeroPress</option>
+            <option value="UFO-V2"    {{ 'selected' if receta.metodo == 'UFO-V2' }}>UFO V2</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Dosis de Café (g)</label>
+          <input type="number" name="dosis_cafe" step="0.1" value="{{ receta.dosis_cafe or '' }}">
+        </div>
+        <div class="form-group">
+          <label>Agua (ml)</label>
+          <input type="number" name="agua_ml" value="{{ receta.agua_ml or '' }}">
+        </div>
+        <div class="form-group">
+          <label>Temperatura (°C)</label>
+          <input type="number" name="temperatura" value="{{ receta.temperatura or '' }}">
+        </div>
+        <div class="form-group">
+          <label>Tiempo Total</label>
+          <input type="text" name="tiempo_total" value="{{ receta.tiempo_total or '' }}">
+        </div>
+        <div class="form-group full">
+          <label>Notas de Preparación</label>
+          <textarea name="notas">{{ receta.notas or '' }}</textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <a href="/recetas" class="btn btn-ghost">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

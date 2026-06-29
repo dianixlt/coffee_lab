@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="edit-wrap">
+  <a href="/cafes" class="back-link">← Volver a Cafés</a>
+  <div class="page-header" style="margin-bottom:20px;">
+    <div>
+      <h1>Editar Café</h1>
+      <p>{{ cafe.nombre }}</p>
+    </div>
+  </div>
+  <div class="form-panel">
+    <form action="/cafes/edit/{{ cafe.id }}" method="POST">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre *</label>
+          <input type="text" name="nombre" required value="{{ cafe.nombre }}">
+        </div>
+        <div class="form-group">
+          <label>Roaster</label>
+          <input type="text" name="roaster" value="{{ cafe.roaster or '' }}">
+        </div>
+        <div class="form-group">
+          <label>País de Origen</label>
+          <input type="text" name="pais_origen" value="{{ cafe.pais_origen or '' }}">
+        </div>
+        <div class="form-group">
+          <label>Proceso</label>
+          <select name="proceso">
+            <option value="">— seleccionar —</option>
+            <option value="lavado"  {{ 'selected' if cafe.proceso == 'lavado' }}>Lavado</option>
+            <option value="natural" {{ 'selected' if cafe.proceso == 'natural' }}>Natural</option>
+            <option value="honey"   {{ 'selected' if cafe.proceso == 'honey' }}>Honey</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Estado</label>
+          <select name="estado">
+            <option value="en_stock"  {{ 'selected' if cafe.estado == 'en_stock' }}>En stock</option>
+            <option value="terminado" {{ 'selected' if cafe.estado == 'terminado' }}>Terminado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Puntuación (1–10)</label>
+          <input type="number" name="puntuacion" min="1" max="10" step="0.5" value="{{ cafe.puntuacion or '' }}">
+        </div>
+        <div class="form-group">
+          <label>Fecha de Compra</label>
+          <input type="date" name="fecha_compra" value="{{ cafe.fecha_compra or '' }}">
+        </div>
+        <div class="form-group full">
+          <label>Perfil de Taza / Notas de Cata</label>
+          <textarea name="perfil_taza">{{ cafe.perfil_taza or '' }}</textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <a href="/cafes" class="btn btn-ghost">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

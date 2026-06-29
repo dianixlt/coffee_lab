@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1>Cafés</h1>
+    <p>Tu colección de cafés de especialidad</p>
+  </div>
+  <button class="btn btn-primary" onclick="toggleForm(this, 'add-form')">+ Agregar</button>
+</div>
+
+<div class="form-panel" id="add-form">
+  <div class="form-title">Agregar Café</div>
+  <form action="/cafes/add" method="POST">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nombre *</label>
+        <input type="text" name="nombre" required placeholder="Ej. Yirgacheffe Natural">
+      </div>
+      <div class="form-group">
+        <label>Roaster</label>
+        <input type="text" name="roaster" placeholder="Ej. Quasar Coffee">
+      </div>
+      <div class="form-group">
+        <label>País de Origen</label>
+        <input type="text" name="pais_origen" placeholder="Ej. Etiopía">
+      </div>
+      <div class="form-group">
+        <label>Proceso</label>
+        <select name="proceso">
+          <option value="">— seleccionar —</option>
+          <option value="lavado">Lavado</option>
+          <option value="natural">Natural</option>
+          <option value="honey">Honey</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Estado</label>
+        <select name="estado">
+          <option value="en_stock">En stock</option>
+          <option value="terminado">Terminado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Puntuación (1–10)</label>
+        <input type="number" name="puntuacion" min="1" max="10" step="0.5" placeholder="8.5">
+      </div>
+      <div class="form-group">
+        <label>Fecha de Compra</label>
+        <input type="date" name="fecha_compra">
+      </div>
+      <div class="form-group full">
+        <label>Perfil de Taza / Notas de Cata</label>
+        <textarea name="perfil_taza" placeholder="Ej. Durazno, jazmín, chocolate negro, acidez brillante, cuerpo sedoso..."></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Guardar Café</button>
+    </div>
+  </form>
+</div>
+
+{% if cafes %}
+<div class="cards-grid">
+  {% for c in cafes %}
+  <div class="card">
+    <div class="card-title">{{ c.nombre }}</div>
+    <div class="card-subtitle">{{ c.roaster or '—' }} &nbsp;·&nbsp; {{ c.pais_origen or '—' }}</div>
+    <div class="card-badges">
+      {% if c.proceso %}
+        <span class="badge badge-{{ c.proceso }}">{{ c.proceso | title }}</span>
+      {% endif %}
+      <span class="badge badge-{{ c.estado }}">
+        {{ 'En stock' if c.estado == 'en_stock' else 'Terminado' }}
+      </span>
+    </div>
+    {% if c.perfil_taza %}
+    <div class="card-meta" style="margin-bottom: 10px;">
+      <strong>Notas:</strong> {{ c.perfil_taza }}
+    </div>
+    {% endif %}
+    <div class="card-meta" style="display:flex; align-items:center; gap:14px;">
+      {% if c.puntuacion %}
+        <span class="score">
+          <span class="score-val">{{ c.puntuacion }}</span>
+          <span class="score-label">/10</span>
+        </span>
+      {% endif %}
+      {% if c.fecha_compra %}
+        <span>{{ c.fecha_compra }}</span>
+      {% endif %}
+    </div>
+    <div class="card-actions">
+      <a href="/cafes/edit/{{ c.id }}" class="btn btn-ghost btn-sm">Editar</a>
+      <form action="/cafes/delete/{{ c.id }}" method="POST"
+            onsubmit="return confirm('¿Eliminar {{ c.nombre }}?')">
+        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">☕</div>
+  <p>Aún no tienes cafés en tu colección.<br>Presiona <strong>+ Agregar</strong> para registrar el primero.</p>
+</div>
+{% endif %}
+
+{% endblock %}

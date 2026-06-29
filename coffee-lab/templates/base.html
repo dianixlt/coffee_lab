@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coffee Lab</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="logo">
+    <span class="logo-icon">☕</span>
+    <span class="logo-text">Coffee Lab</span>
+  </div>
+  <ul class="nav-links">
+    <li>
+      <a href="/cafes" class="{{ 'active' if active == 'cafes' else '' }}">
+        <span class="nav-icon">◈</span> Cafés
+      </a>
+    </li>
+    <li>
+      <a href="/recetas" class="{{ 'active' if active == 'recetas' else '' }}">
+        <span class="nav-icon">◈</span> Recetas
+      </a>
+    </li>
+    <li>
+      <a href="/equipo" class="{{ 'active' if active == 'equipo' else '' }}">
+        <span class="nav-icon">◈</span> Equipo
+      </a>
+    </li>
+    <li>
+      <a href="/sesiones" class="{{ 'active' if active == 'sesiones' else '' }}">
+        <span class="nav-icon">◈</span> Sesiones de Breo
+      </a>
+    </li>
+    <li>
+      <a href="/learning" class="{{ 'active' if active == 'learning' else '' }}">
+        <span class="nav-icon">◈</span> Learning
+      </a>
+    </li>
+  </ul>
+  <div class="sidebar-footer">Coffee Lab · Personal</div>
+</nav>
+
+<main class="main-content">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for cat, msg in messages %}
+        <div class="flash flash-{{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</main>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
